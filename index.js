@@ -10,7 +10,7 @@ const SECRET_TOKEN = process.env.TOKEN || "cdfsff123#dsfdsdf"; // Use a strong s
 
 // ✅ Allow frontend to fetch from the server (Restrict in production)
 app.use(cors({
-  origin: ["https://yourdomain.com"], // Replace with your frontend domain
+  origin:  "*", // Replace with your frontend domain
   methods: "GET",
   allowedHeaders: "Authorization, Content-Type"
 }));
