@@ -1,17 +1,19 @@
 const express = require("express");
-const axios = require("axios");
-const dotenv = require("dotenv");
 const cors = require("cors");
-
-dotenv.config();
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Allow requests from frontend (CORS policy)
-app.use(cors());
+// ✅ Allow frontend to fetch from the server
+app.use(cors({
+  origin: "*",  // Change * to your frontend URL in production
+  methods: "GET,POST",
+  allowedHeaders: "Content-Type"
+}));
 
-// Securely send Firebase credentials to frontend
+app.use(express.json());
+
 app.get("/api/firebase-config", (req, res) => {
   res.json({
     apiKey: process.env.FIREBASE_API_KEY,
@@ -20,27 +22,8 @@ app.get("/api/firebase-config", (req, res) => {
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.FIREBASE_APP_ID,
-    measurementId: process.env.FIREBASE_MEASUREMENT_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
   });
 });
 
-// Fetch Firestore Data Securely
-app.get("/api/get-data", async (req, res) => {
-  try {
-    const apiKey = process.env.FIREBASE_API_KEY;
-    const projectId = process.env.FIREBASE_PROJECT_ID;
-
-    const response = await axios.get(
-      `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/yourCollection?key=${apiKey}`
-    );
-
-    res.json(response.data);
-  } catch (error) {
-    console.error("Error fetching Firestore data:", error);
-    res.status(500).json({ error: "Failed to fetch Firestore data" });
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`Proxy server running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
