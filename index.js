@@ -5,16 +5,26 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Allow frontend to fetch from the server
+// Secret token for secure API access
+const SECRET_TOKEN = process.env.SECRET_TOKEN || "cdfsff123#dsfdsdf"; // Use a strong secret
+
+// ✅ Allow frontend to fetch from the server (Restrict in production)
 app.use(cors({
-  origin: "*",  // Change * to your frontend URL in production
-  methods: "GET,POST",
-  allowedHeaders: "Content-Type"
+  origin: ["https://yourdomain.com"], // Replace with your frontend domain
+  methods: "GET",
+  allowedHeaders: "Authorization, Content-Type"
 }));
 
 app.use(express.json());
 
+// 🛡️ Secure Firebase Config Endpoint
 app.get("/api/firebase-config", (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || authHeader !== `Bearer ${SECRET_TOKEN}`) {
+    return res.status(403).json({ error: "Unauthorized" });
+  }
+
   res.json({
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
