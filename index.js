@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Secret token for secure API access
-const SECRET_TOKEN = process.env.SECRET_TOKEN || "cdfsff123#dsfdsdf"; // Use a strong secret
+const TOKEN = process.env.SECRET_TOKEN || "cdfsff123#dsfdsdf"; // Use a strong secret
 
 // ✅ Allow frontend to fetch from the server (Restrict in production)
 app.use(cors({
